@@ -1,0 +1,18 @@
+package com.vinisnzy.financial_control_api.dtos.user.requests;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
+
+@Schema(description = "Update a user.")
+public record UpdateUserRequest(
+        @Schema(description = "User email", example = "user@example.com", nullable = true)
+        @Email(message = "Email must be valid.")
+        @Size(max = 255, message = "Email must have at most 255 characters.")
+        String email,
+
+        @Schema(description = "User password", example = "password123", nullable = true, accessMode = Schema.AccessMode.WRITE_ONLY)
+        @Size(min = 8, max = 72, message = "Password must have between 8 and 72 characters.")
+        String password
+) {
+}
