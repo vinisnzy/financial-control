@@ -22,8 +22,11 @@ public class IncomeCategory extends BaseEntity {
     @Column(nullable = false)
     private String color;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
+    @Column(nullable = false)
+    private Boolean isDefault;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @OneToMany(mappedBy = "incomeCategory")
