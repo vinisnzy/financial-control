@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.function.Function;
 
 @Schema(description = "Generic paginated response")
 public record PageResponse<T>(
@@ -31,6 +32,18 @@ public record PageResponse<T>(
     public static <T> PageResponse<T> from(Page<T> page) {
         return new PageResponse<>(
                 page.getContent(),
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isFirst(),
+                page.isLast()
+        );
+    }
+
+    public static <E, T> PageResponse<T> from(Page<E> page, Function<E, T> map) {
+        return new PageResponse<>(
+                page.getContent().stream().map(map).toList(),
                 page.getNumber(),
                 page.getSize(),
                 page.getTotalElements(),
