@@ -22,7 +22,7 @@ CREATE TABLE expenses
     CONSTRAINT fk_expenses_expense_category FOREIGN KEY (expense_category_id) REFERENCES expense_categories (id),
     CONSTRAINT fk_expenses_payment_method FOREIGN KEY (payment_method_id) REFERENCES payment_methods (id),
     CONSTRAINT fk_expenses_fixed_expense FOREIGN KEY (fixed_expense_id) REFERENCES fixed_expenses (id) ON DELETE SET NULL,
-    CONSTRAINT fk_expenses_installment_expense FOREIGN KEY (installment_expense_id) REFERENCES installment_expenses (id)
+    CONSTRAINT fk_expenses_installment_expense FOREIGN KEY (installment_expense_id) REFERENCES installment_expenses (id) ON DELETE CASCADE
 );
 
 CREATE INDEX idx_expenses_user_due_date on expenses (user_id, due_date);
