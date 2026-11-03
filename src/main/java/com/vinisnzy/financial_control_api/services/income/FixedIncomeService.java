@@ -8,6 +8,7 @@ import com.vinisnzy.financial_control_api.entities.User;
 import com.vinisnzy.financial_control_api.entities.billing.BankAccount;
 import com.vinisnzy.financial_control_api.entities.income.FixedIncome;
 import com.vinisnzy.financial_control_api.entities.income.IncomeCategory;
+import com.vinisnzy.financial_control_api.exceptions.NotFoundException;
 import com.vinisnzy.financial_control_api.mappers.income.FixedIncomeMapper;
 import com.vinisnzy.financial_control_api.repositories.income.FixedIncomeRepository;
 import com.vinisnzy.financial_control_api.services.UserService;
@@ -39,7 +40,7 @@ public class FixedIncomeService {
 
     public FixedIncome getEntityOwnerById(UUID id, UUID userId) {
         return this.repository.findByIdAndUserId(id, userId)
-                .orElseThrow(() -> new RuntimeException("Fixed income not found with id: " + id));
+                .orElseThrow(() -> NotFoundException.of("Fixed income", id));
     }
 
     public PageResponse<FixedIncomeResponse> getAll(UUID userId, Pageable pageable) {

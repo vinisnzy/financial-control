@@ -8,6 +8,7 @@ import com.vinisnzy.financial_control_api.entities.User;
 import com.vinisnzy.financial_control_api.entities.billing.BankAccount;
 import com.vinisnzy.financial_control_api.entities.income.Income;
 import com.vinisnzy.financial_control_api.entities.income.IncomeCategory;
+import com.vinisnzy.financial_control_api.exceptions.NotFoundException;
 import com.vinisnzy.financial_control_api.mappers.income.IncomeMapper;
 import com.vinisnzy.financial_control_api.repositories.income.IncomeRepository;
 import com.vinisnzy.financial_control_api.services.UserService;
@@ -26,12 +27,7 @@ public class IncomeService {
     private final IncomeCategoryService incomeCategoryService;
     private final BankAccountService bankAccountService;
 
-    public IncomeService(IncomeRepository repository,
-                         IncomeMapper mapper,
-                         UserService userService,
-                         IncomeCategoryService incomeCategoryService,
-                         BankAccountService bankAccountService,
-                         FixedIncomeService fixedIncomeService) {
+    public IncomeService(IncomeRepository repository, IncomeMapper mapper, UserService userService, IncomeCategoryService incomeCategoryService, BankAccountService bankAccountService, FixedIncomeService fixedIncomeService) {
         this.repository = repository;
         this.mapper = mapper;
         this.userService = userService;
@@ -40,8 +36,7 @@ public class IncomeService {
     }
 
     private Income getEntityOwnerById(UUID id, UUID userId) {
-        return this.repository.findByIdAndUserId(id, userId)
-                .orElseThrow(() -> new RuntimeException("Income not found with id: " + id));
+        return this.repository.findByIdAndUserId(id, userId).orElseThrow(() -> NotFoundException.of("Income", id));
     }
 
     public PageResponse<IncomeResponse> getAll(UUID userId, Pageable pageable) {
@@ -49,8 +44,7 @@ public class IncomeService {
     }
 
     public PageResponse<IncomeResponse> getAll(LocalDate start, LocalDate end, UUID userId, Pageable pageable) {
-        return PageResponse.from(this.repository
-                .findByUserIdAndExpectedAtBetween(userId, start, end, pageable), this.mapper::toResponse);
+        return PageResponse.from(this.repository.findByUserIdAndExpectedAtBetween(userId, start, end, pageable), this.mapper::toResponse);
     }
 
     public IncomeResponse getById(UUID id, UUID userId) {
@@ -58,39 +52,31 @@ public class IncomeService {
     }
 
     public PageResponse<IncomeResponse> getByName(String name, UUID userId, Pageable pageable) {
-        return PageResponse.from(this.repository
-                .findByNameContainingIgnoreCaseAndUserId(name, userId, pageable), this.mapper::toResponse);
+        return PageResponse.from(this.repository.findByNameContainingIgnoreCaseAndUserId(name, userId, pageable), this.mapper::toResponse);
     }
 
     public PageResponse<IncomeResponse> getByBankAccount(UUID bankAccountId, UUID userId, Pageable pageable) {
-        return PageResponse.from(this.repository
-                .findByBankAccountIdAndUserId(bankAccountId, userId, pageable), this.mapper::toResponse);
+        return PageResponse.from(this.repository.findByBankAccountIdAndUserId(bankAccountId, userId, pageable), this.mapper::toResponse);
     }
 
     public PageResponse<IncomeResponse> getByBankAccount(UUID bankAccountId, LocalDate start, LocalDate end, UUID userId, Pageable pageable) {
-        return PageResponse.from(this.repository
-                .findByBankAccountIdAndUserIdAndExpectedAtBetween(bankAccountId, userId, start, end, pageable), this.mapper::toResponse);
+        return PageResponse.from(this.repository.findByBankAccountIdAndUserIdAndExpectedAtBetween(bankAccountId, userId, start, end, pageable), this.mapper::toResponse);
     }
 
     public PageResponse<IncomeResponse> getByIncomeCategory(UUID incomeCategoryId, UUID userId, Pageable pageable) {
-        return PageResponse.from(this.repository
-                .findByIncomeCategoryIdAndUserId(incomeCategoryId, userId, pageable), this.mapper::toResponse);
+        return PageResponse.from(this.repository.findByIncomeCategoryIdAndUserId(incomeCategoryId, userId, pageable), this.mapper::toResponse);
     }
 
     public PageResponse<IncomeResponse> getByIncomeCategory(UUID incomeCategoryId, LocalDate start, LocalDate end, UUID userId, Pageable pageable) {
-        return PageResponse.from(this.repository
-                        .findByIncomeCategoryIdAndUserIdAndExpectedAtBetween(incomeCategoryId, userId, start, end, pageable),
-                this.mapper::toResponse);
+        return PageResponse.from(this.repository.findByIncomeCategoryIdAndUserIdAndExpectedAtBetween(incomeCategoryId, userId, start, end, pageable), this.mapper::toResponse);
     }
 
     public IncomeResponse create(UUID userId, CreateIncomeRequest data) {
         Income entity = this.mapper.toEntity(data);
 
         User user = this.userService.getEntity(userId);
-        IncomeCategory incomeCategory = this.incomeCategoryService
-                .getEntityOwnedOrDefaultByIdOrThrow(data.incomeCategoryId(), userId);
-        BankAccount bankAccount = this.bankAccountService
-                .getEntityOwnedByIdOrThrow(data.bankAccountId(), userId);
+        IncomeCategory incomeCategory = this.incomeCategoryService.getEntityOwnedOrDefaultByIdOrThrow(data.incomeCategoryId(), userId);
+        BankAccount bankAccount = this.bankAccountService.getEntityOwnedByIdOrThrow(data.bankAccountId(), userId);
 
         entity.setUser(user);
         entity.setIncomeCategory(incomeCategory);
@@ -104,13 +90,11 @@ public class IncomeService {
         Income entity = this.getEntityOwnerById(id, userId);
         this.mapper.updateEntity(data, entity);
         if (data.incomeCategoryId() != null) {
-            IncomeCategory incomeCategory = this.incomeCategoryService
-                    .getEntityOwnedOrDefaultByIdOrThrow(data.incomeCategoryId(), userId);
+            IncomeCategory incomeCategory = this.incomeCategoryService.getEntityOwnedOrDefaultByIdOrThrow(data.incomeCategoryId(), userId);
             entity.setIncomeCategory(incomeCategory);
         }
         if (data.bankAccountId() != null) {
-            BankAccount bankAccount = this.bankAccountService
-                    .getEntityOwnedByIdOrThrow(data.bankAccountId(), userId);
+            BankAccount bankAccount = this.bankAccountService.getEntityOwnedByIdOrThrow(data.bankAccountId(), userId);
             entity.setBankAccount(bankAccount);
         }
         this.repository.save(entity);

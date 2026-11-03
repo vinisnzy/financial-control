@@ -6,6 +6,7 @@ import com.vinisnzy.financial_control_api.dtos.billing.responses.BankAccountResp
 import com.vinisnzy.financial_control_api.dtos.common.PageResponse;
 import com.vinisnzy.financial_control_api.entities.User;
 import com.vinisnzy.financial_control_api.entities.billing.BankAccount;
+import com.vinisnzy.financial_control_api.exceptions.NotFoundException;
 import com.vinisnzy.financial_control_api.mappers.billing.BankAccountMapper;
 import com.vinisnzy.financial_control_api.repositories.billing.BankAccountRepository;
 import com.vinisnzy.financial_control_api.services.UserService;
@@ -27,7 +28,7 @@ public class BankAccountService {
     }
 
     public BankAccount getEntityOwnedByIdOrThrow(UUID id, UUID userId) {
-        return this.repository.findByIdAndUserId(id, userId).orElseThrow(() -> new RuntimeException("Bank account not found with id: " + id));
+        return this.repository.findByIdAndUserId(id, userId).orElseThrow(() -> NotFoundException.of("Bank", id));
     }
 
     public PageResponse<BankAccountResponse> getAll(UUID userId, Pageable pageable) {

@@ -3,6 +3,7 @@ package com.vinisnzy.financial_control_api.services;
 import com.vinisnzy.financial_control_api.dtos.user.requests.UpdateUserRequest;
 import com.vinisnzy.financial_control_api.dtos.user.responses.UserResponse;
 import com.vinisnzy.financial_control_api.entities.User;
+import com.vinisnzy.financial_control_api.exceptions.NotFoundException;
 import com.vinisnzy.financial_control_api.mappers.UserMapper;
 import com.vinisnzy.financial_control_api.repositories.UserRepository;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ public class UserService {
 
     public User getEntity(UUID id) {
         return this.repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+                .orElseThrow(() -> NotFoundException.of("User", id));
     }
 
     public UserResponse getById(UUID id) {
@@ -30,7 +31,7 @@ public class UserService {
 
     public UserResponse getByEmail(String email) {
         return this.mapper.toResponse(this.repository.findByEmail(email.trim().toLowerCase())
-                .orElseThrow(() -> new RuntimeException("User not found with email: " + email)));
+                .orElseThrow(() -> NotFoundException.of("User", email)));
     }
 
     public UserResponse update(UUID id, UpdateUserRequest data) {

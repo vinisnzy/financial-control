@@ -8,6 +8,7 @@ import com.vinisnzy.financial_control_api.entities.User;
 import com.vinisnzy.financial_control_api.entities.billing.PaymentMethod;
 import com.vinisnzy.financial_control_api.entities.expense.ExpenseCategory;
 import com.vinisnzy.financial_control_api.entities.expense.FixedExpense;
+import com.vinisnzy.financial_control_api.exceptions.NotFoundException;
 import com.vinisnzy.financial_control_api.mappers.expense.FixedExpenseMapper;
 import com.vinisnzy.financial_control_api.repositories.expense.FixedExpenseRepository;
 import com.vinisnzy.financial_control_api.services.UserService;
@@ -39,7 +40,7 @@ public class FixedExpenseService {
 
     public FixedExpense getEntityOwnerById(UUID id, UUID userId) {
         return this.repository.findByIdAndUserId(id, userId)
-                .orElseThrow(() -> new RuntimeException("Fixed expense not found with id: " + id));
+                .orElseThrow(() -> NotFoundException.of("Fixed expense", id));
     }
 
     public PageResponse<FixedExpenseResponse> getAll(UUID userId, Pageable pageable) {

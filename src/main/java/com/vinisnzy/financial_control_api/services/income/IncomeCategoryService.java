@@ -6,6 +6,7 @@ import com.vinisnzy.financial_control_api.dtos.income.requests.UpdateIncomeCateg
 import com.vinisnzy.financial_control_api.dtos.income.responses.IncomeCategoryResponse;
 import com.vinisnzy.financial_control_api.entities.User;
 import com.vinisnzy.financial_control_api.entities.income.IncomeCategory;
+import com.vinisnzy.financial_control_api.exceptions.NotFoundException;
 import com.vinisnzy.financial_control_api.mappers.income.IncomeCategoryMapper;
 import com.vinisnzy.financial_control_api.repositories.income.IncomeCategoryRepository;
 import com.vinisnzy.financial_control_api.services.UserService;
@@ -28,7 +29,7 @@ public class IncomeCategoryService {
 
     public IncomeCategory getEntityOwnedOrDefaultByIdOrThrow(UUID id, UUID userId) {
         return this.repository.findByIdAndUserIdOrDefault(id, userId)
-                .orElseThrow(() -> new RuntimeException("Income category not found with id: " + id));
+                .orElseThrow(() -> NotFoundException.of("Income", id));
     }
 
     public PageResponse<IncomeCategoryResponse> getAll(UUID userId, Pageable pageable) {

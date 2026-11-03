@@ -6,6 +6,7 @@ import com.vinisnzy.financial_control_api.dtos.expense.requests.UpdateExpenseCat
 import com.vinisnzy.financial_control_api.dtos.expense.responses.ExpenseCategoryResponse;
 import com.vinisnzy.financial_control_api.entities.User;
 import com.vinisnzy.financial_control_api.entities.expense.ExpenseCategory;
+import com.vinisnzy.financial_control_api.exceptions.NotFoundException;
 import com.vinisnzy.financial_control_api.mappers.expense.ExpenseCategoryMapper;
 import com.vinisnzy.financial_control_api.repositories.expense.ExpenseCategoryRepository;
 import com.vinisnzy.financial_control_api.services.UserService;
@@ -28,7 +29,7 @@ public class ExpenseCategoryService {
 
     public ExpenseCategory getEntityOwnedOrDefaultByIdOrThrow(UUID id, UUID userId) {
         return this.repository.findByIdAndUserIdOrDefault(id, userId)
-                .orElseThrow(() -> new RuntimeException("Expense category not found with id: " + id));
+                .orElseThrow(() -> NotFoundException.of("Expense category", id));
     }
 
     public PageResponse<ExpenseCategoryResponse> getAll(UUID userId, Pageable pageable) {

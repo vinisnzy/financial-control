@@ -9,6 +9,9 @@ import com.vinisnzy.financial_control_api.entities.billing.PaymentMethod;
 import com.vinisnzy.financial_control_api.entities.expense.Expense;
 import com.vinisnzy.financial_control_api.entities.expense.ExpenseCategory;
 import com.vinisnzy.financial_control_api.entities.expense.InstallmentExpense;
+import com.vinisnzy.financial_control_api.exceptions.BusinessException;
+import com.vinisnzy.financial_control_api.exceptions.ErrorCode;
+import com.vinisnzy.financial_control_api.exceptions.NotFoundException;
 import com.vinisnzy.financial_control_api.mappers.expense.InstallmentExpenseMapper;
 import com.vinisnzy.financial_control_api.repositories.expense.ExpenseRepository;
 import com.vinisnzy.financial_control_api.repositories.expense.InstallmentExpenseRepository;
@@ -49,7 +52,7 @@ public class InstallmentExpenseService {
 
     public InstallmentExpense getEntityOwnerById(UUID id, UUID userId) {
         return this.repository.findByIdAndUserId(id, userId)
-                .orElseThrow(() -> new RuntimeException("Installment expense not found with id: " + id));
+                .orElseThrow(() -> NotFoundException.of("Installment expense", id));
     }
 
     @Transactional(readOnly = true)
@@ -90,7 +93,8 @@ public class InstallmentExpenseService {
                         || (data.firstDueDate() != null && !data.firstDueDate().equals(entity.getFirstDueDate()));
 
         if (scheduleChanged && entity.getExpenses().stream().anyMatch(e -> e.getPaidAt() != null)) {
-            throw new RuntimeException("Cannot change amount, installments or first due date of an installment expense with paid installments");
+            throw new BusinessException(ErrorCode.INSTALLMENT_HAS_PAID_PARTS,
+                    "Cannot change amount, installments or first due date of an installment expense with paid installments");
         }
 
         this.mapper.updateEntity(data, entity);
