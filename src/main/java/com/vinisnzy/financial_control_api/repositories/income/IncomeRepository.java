@@ -27,4 +27,6 @@ public interface IncomeRepository extends JpaRepository<Income, UUID> {
 
     Page<Income> findByIncomeCategoryIdAndUserIdAndExpectedAtBetween(
             UUID incomeCategoryId, UUID userId, LocalDate start, LocalDate end, Pageable pageable);
+
+    boolean existsByFixedIncomeIdAndExpectedAtBetween(UUID fixedIncomeId, LocalDate start, LocalDate end);
 }

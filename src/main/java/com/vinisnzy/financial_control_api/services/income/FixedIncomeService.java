@@ -13,11 +13,15 @@ import com.vinisnzy.financial_control_api.mappers.income.FixedIncomeMapper;
 import com.vinisnzy.financial_control_api.repositories.income.FixedIncomeRepository;
 import com.vinisnzy.financial_control_api.services.UserService;
 import com.vinisnzy.financial_control_api.services.billing.BankAccountService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.YearMonth;
+import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class FixedIncomeService {
     private final FixedIncomeRepository repository;
@@ -25,17 +29,20 @@ public class FixedIncomeService {
     private final UserService userService;
     private final IncomeCategoryService incomeCategoryService;
     private final BankAccountService bankAccountService;
+    private final IncomeService incomeService;
 
     public FixedIncomeService(FixedIncomeRepository repository,
                               FixedIncomeMapper mapper,
                               UserService userService,
                               IncomeCategoryService incomeCategoryService,
-                              BankAccountService bankAccountService) {
+                              BankAccountService bankAccountService,
+                              IncomeService incomeService) {
         this.repository = repository;
         this.mapper = mapper;
         this.userService = userService;
         this.incomeCategoryService = incomeCategoryService;
         this.bankAccountService = bankAccountService;
+        this.incomeService = incomeService;
     }
 
     public FixedIncome getEntityOwnerById(UUID id, UUID userId) {
@@ -65,6 +72,20 @@ public class FixedIncomeService {
 
         this.repository.save(entity);
         return mapper.toResponse(entity);
+    }
+
+    public int generateForMonth(YearMonth month) {
+        List<FixedIncome> activeFixedIncomes = this.repository
+                .findActiveBetween(month.atDay(1), month.atEndOfMonth());
+        int count = 0;
+        for (FixedIncome fixedIncome : activeFixedIncomes) {
+            try {
+                if (this.incomeService.createByFixedIncomeAndMonth(fixedIncome, month)) count++;
+            } catch (Exception e) {
+                log.error("Failed to generate income for fixed income {}", fixedIncome.getId(), e);
+            }
+        }
+        return count;
     }
 
     public FixedIncomeResponse update(UUID id, UpdateFixedIncomeRequest data, UUID userId) {

@@ -6,6 +6,7 @@ import com.vinisnzy.financial_control_api.dtos.income.requests.UpdateIncomeReque
 import com.vinisnzy.financial_control_api.dtos.income.responses.IncomeResponse;
 import com.vinisnzy.financial_control_api.entities.User;
 import com.vinisnzy.financial_control_api.entities.billing.BankAccount;
+import com.vinisnzy.financial_control_api.entities.income.FixedIncome;
 import com.vinisnzy.financial_control_api.entities.income.Income;
 import com.vinisnzy.financial_control_api.entities.income.IncomeCategory;
 import com.vinisnzy.financial_control_api.exceptions.NotFoundException;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.UUID;
 
 @Service
@@ -84,6 +86,24 @@ public class IncomeService {
 
         this.repository.save(entity);
         return mapper.toResponse(entity);
+    }
+
+    public boolean createByFixedIncomeAndMonth(FixedIncome fixedIncome, YearMonth month) {
+        LocalDate start = month.atDay(1);
+        LocalDate end = month.atEndOfMonth();
+        if (this.repository.existsByFixedIncomeIdAndExpectedAtBetween(fixedIncome.getId(), start, end)) return false;
+
+        int day = Math.min(fixedIncome.getPayday(), month.lengthOfMonth());
+        Income income = new Income();
+        income.setName(fixedIncome.getName());
+        income.setAmount(fixedIncome.getAmount());
+        income.setIncomeCategory(fixedIncome.getIncomeCategory());
+        income.setBankAccount(fixedIncome.getBankAccount());
+        income.setExpectedAt(month.atDay(day));
+        income.setFixedIncome(fixedIncome);
+        income.setUser(fixedIncome.getUser());
+        this.repository.save(income);
+        return true;
     }
 
     public IncomeResponse update(UUID id, UpdateIncomeRequest data, UUID userId) {

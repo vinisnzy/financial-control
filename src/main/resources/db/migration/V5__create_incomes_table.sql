@@ -16,6 +16,8 @@ CREATE TABLE incomes
     updated_at         TIMESTAMPTZ,
     user_id            UUID           NOT NULL,
 
+    CONSTRAINT uq_fixed_income_month UNIQUE (fixed_income_id, expected_at),
+
     CONSTRAINT fk_incomes_user FOREIGN KEY (user_id) REFERENCES users (id),
     CONSTRAINT fk_incomes_category FOREIGN KEY (income_category_id) REFERENCES income_categories (id),
     CONSTRAINT fk_incomes_bank_account FOREIGN KEY (bank_account_id) REFERENCES bank_accounts (id),
