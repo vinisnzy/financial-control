@@ -29,4 +29,6 @@ public interface ExpenseRepository extends JpaRepository<Expense, UUID> {
 
     Page<Expense> findByPaymentMethodIdAndUserIdAndDueDateBetween(
             UUID paymentMethodId, UUID userId, LocalDate start, LocalDate end, Pageable pageable);
+
+    boolean existsByFixedExpenseIdAndDueDateBetween(UUID fixedExpenseId, LocalDate start, LocalDate end);
 }

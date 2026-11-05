@@ -18,6 +18,8 @@ CREATE TABLE expenses
     updated_at             TIMESTAMPTZ,
     user_id                UUID           NOT NULL,
 
+    CONSTRAINT uq_fixed_expense_month UNIQUE (fixed_expense_id, due_date),
+
     CONSTRAINT fk_expenses_user FOREIGN KEY (user_id) REFERENCES users (id),
     CONSTRAINT fk_expenses_expense_category FOREIGN KEY (expense_category_id) REFERENCES expense_categories (id),
     CONSTRAINT fk_expenses_payment_method FOREIGN KEY (payment_method_id) REFERENCES payment_methods (id),

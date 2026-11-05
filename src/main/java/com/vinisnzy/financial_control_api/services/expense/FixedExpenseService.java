@@ -13,11 +13,15 @@ import com.vinisnzy.financial_control_api.mappers.expense.FixedExpenseMapper;
 import com.vinisnzy.financial_control_api.repositories.expense.FixedExpenseRepository;
 import com.vinisnzy.financial_control_api.services.UserService;
 import com.vinisnzy.financial_control_api.services.billing.PaymentMethodService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.YearMonth;
+import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class FixedExpenseService {
     private final FixedExpenseRepository repository;
@@ -25,17 +29,20 @@ public class FixedExpenseService {
     private final UserService userService;
     private final ExpenseCategoryService expenseCategoryService;
     private final PaymentMethodService paymentMethodService;
+    private final ExpenseService expenseService;
 
     public FixedExpenseService(FixedExpenseRepository repository,
                                FixedExpenseMapper mapper,
                                UserService userService,
                                ExpenseCategoryService expenseCategoryService,
-                               PaymentMethodService paymentMethodService) {
+                               PaymentMethodService paymentMethodService,
+                               ExpenseService expenseService) {
         this.repository = repository;
         this.mapper = mapper;
         this.userService = userService;
         this.expenseCategoryService = expenseCategoryService;
         this.paymentMethodService = paymentMethodService;
+        this.expenseService = expenseService;
     }
 
     public FixedExpense getEntityOwnerById(UUID id, UUID userId) {
@@ -70,6 +77,19 @@ public class FixedExpenseService {
 
         this.repository.save(entity);
         return mapper.toResponse(entity);
+    }
+
+    public int generateForMonth(YearMonth month) {
+        List<FixedExpense> activeFixedExpenses = this.repository.findActiveBetween(month.atDay(1), month.atEndOfMonth());
+        int count = 0;
+        for (FixedExpense fixedExpense : activeFixedExpenses) {
+            try {
+                if (this.expenseService.createByFixedExpenseAndMonth(fixedExpense, month)) count++;
+            } catch (Exception e) {
+                log.error("Failed to generate expense for fixed expense {}", fixedExpense.getId(), e);
+            }
+        }
+        return count;
     }
 
     public FixedExpenseResponse update(UUID id, UpdateFixedExpenseRequest data, UUID userId) {

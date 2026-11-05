@@ -8,6 +8,7 @@ import com.vinisnzy.financial_control_api.entities.User;
 import com.vinisnzy.financial_control_api.entities.billing.PaymentMethod;
 import com.vinisnzy.financial_control_api.entities.expense.Expense;
 import com.vinisnzy.financial_control_api.entities.expense.ExpenseCategory;
+import com.vinisnzy.financial_control_api.entities.expense.FixedExpense;
 import com.vinisnzy.financial_control_api.exceptions.NotFoundException;
 import com.vinisnzy.financial_control_api.mappers.expense.ExpenseMapper;
 import com.vinisnzy.financial_control_api.repositories.expense.ExpenseRepository;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.UUID;
 
 @Service
@@ -69,8 +71,7 @@ public class ExpenseService {
 
     public PageResponse<ExpenseResponse> getByExpenseCategory(UUID expenseCategoryId, LocalDate start, LocalDate end, UUID userId, Pageable pageable) {
         return PageResponse.from(this.repository
-                        .findByExpenseCategoryIdAndUserIdAndDueDateBetween(expenseCategoryId, userId, start, end, pageable),
-                this.mapper::toResponse);
+                .findByExpenseCategoryIdAndUserIdAndDueDateBetween(expenseCategoryId, userId, start, end, pageable), this.mapper::toResponse);
     }
 
     public PageResponse<ExpenseResponse> getByPaymentMethod(UUID paymentMethodId, UUID userId, Pageable pageable) {
@@ -80,8 +81,7 @@ public class ExpenseService {
 
     public PageResponse<ExpenseResponse> getByPaymentMethod(UUID paymentMethodId, LocalDate start, LocalDate end, UUID userId, Pageable pageable) {
         return PageResponse.from(this.repository
-                        .findByPaymentMethodIdAndUserIdAndDueDateBetween(paymentMethodId, userId, start, end, pageable),
-                this.mapper::toResponse);
+                .findByPaymentMethodIdAndUserIdAndDueDateBetween(paymentMethodId, userId, start, end, pageable), this.mapper::toResponse);
     }
 
     public PageResponse<ExpenseResponse> getByInstallmentExpense(UUID installmentExpenseId, UUID userId, Pageable pageable) {
@@ -93,10 +93,10 @@ public class ExpenseService {
         Expense entity = this.mapper.toEntity(data);
 
         User user = this.userService.getEntity(userId);
-        ExpenseCategory expenseCategory = this.expenseCategoryService
-                .getEntityOwnedOrDefaultByIdOrThrow(data.expenseCategoryId(), userId);
-        PaymentMethod paymentMethod = this.paymentMethodService
-                .getEntityOwnedByIdOrThrow(data.paymentMethodId(), userId);
+        ExpenseCategory expenseCategory = this.expenseCategoryService.
+                getEntityOwnedOrDefaultByIdOrThrow(data.expenseCategoryId(), userId);
+        PaymentMethod paymentMethod = this.paymentMethodService.
+                getEntityOwnedByIdOrThrow(data.paymentMethodId(), userId);
 
         entity.setUser(user);
         entity.setExpenseCategory(expenseCategory);
@@ -106,17 +106,36 @@ public class ExpenseService {
         return mapper.toResponse(entity);
     }
 
+    public boolean createByFixedExpenseAndMonth(FixedExpense fixedExpense, YearMonth month) {
+        LocalDate first = month.atDay(1);
+        LocalDate last = month.atEndOfMonth();
+        if (this.repository.
+                existsByFixedExpenseIdAndDueDateBetween(fixedExpense.getId(), first, last)) return false;
+
+        int day = Math.min(fixedExpense.getDueDay(), month.lengthOfMonth());
+        Expense expense = new Expense();
+        expense.setName(fixedExpense.getName());
+        expense.setAmount(fixedExpense.getAmount());
+        expense.setExpenseCategory(fixedExpense.getExpenseCategory());
+        expense.setPaymentMethod(fixedExpense.getPaymentMethod());
+        expense.setDueDate(month.atDay(day));
+        expense.setFixedExpense(fixedExpense);
+        expense.setUser(fixedExpense.getUser());
+        this.repository.save(expense);
+        return true;
+    }
+
     public ExpenseResponse update(UUID id, UpdateExpenseRequest data, UUID userId) {
         Expense entity = this.getEntityOwnerById(id, userId);
         this.mapper.updateEntity(data, entity);
         if (data.expenseCategoryId() != null) {
-            ExpenseCategory expenseCategory = this.expenseCategoryService
-                    .getEntityOwnedOrDefaultByIdOrThrow(data.expenseCategoryId(), userId);
+            ExpenseCategory expenseCategory = this.expenseCategoryService.
+                    getEntityOwnedOrDefaultByIdOrThrow(data.expenseCategoryId(), userId);
             entity.setExpenseCategory(expenseCategory);
         }
         if (data.paymentMethodId() != null) {
-            PaymentMethod paymentMethod = this.paymentMethodService
-                    .getEntityOwnedByIdOrThrow(data.paymentMethodId(), userId);
+            PaymentMethod paymentMethod = this.paymentMethodService.
+                    getEntityOwnedByIdOrThrow(data.paymentMethodId(), userId);
             entity.setPaymentMethod(paymentMethod);
         }
         this.repository.save(entity);
