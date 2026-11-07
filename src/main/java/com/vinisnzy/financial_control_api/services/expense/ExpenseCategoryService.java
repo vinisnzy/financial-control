@@ -4,12 +4,12 @@ import com.vinisnzy.financial_control_api.dtos.common.PageResponse;
 import com.vinisnzy.financial_control_api.dtos.expense.requests.CreateExpenseCategoryRequest;
 import com.vinisnzy.financial_control_api.dtos.expense.requests.UpdateExpenseCategoryRequest;
 import com.vinisnzy.financial_control_api.dtos.expense.responses.ExpenseCategoryResponse;
-import com.vinisnzy.financial_control_api.entities.User;
+import com.vinisnzy.financial_control_api.entities.auth.User;
 import com.vinisnzy.financial_control_api.entities.expense.ExpenseCategory;
 import com.vinisnzy.financial_control_api.exceptions.NotFoundException;
 import com.vinisnzy.financial_control_api.mappers.expense.ExpenseCategoryMapper;
 import com.vinisnzy.financial_control_api.repositories.expense.ExpenseCategoryRepository;
-import com.vinisnzy.financial_control_api.services.UserService;
+import com.vinisnzy.financial_control_api.services.auth.UserService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 

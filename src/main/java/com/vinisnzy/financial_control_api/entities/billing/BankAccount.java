@@ -1,7 +1,7 @@
 package com.vinisnzy.financial_control_api.entities.billing;
 
 import com.vinisnzy.financial_control_api.entities.BaseEntity;
-import com.vinisnzy.financial_control_api.entities.User;
+import com.vinisnzy.financial_control_api.entities.auth.User;
 import com.vinisnzy.financial_control_api.entities.income.FixedIncome;
 import com.vinisnzy.financial_control_api.entities.income.Income;
 import jakarta.persistence.*;

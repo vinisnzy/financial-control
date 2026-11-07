@@ -10,6 +10,7 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.*;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -39,13 +40,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     public ProblemDetail handleNotFoundException(NotFoundException ex) {
-        return build(HttpStatus.NOT_FOUND, "Resource Not Found", "RESOURCE_NOT_FOUND", ex.getMessage());
+        return build(HttpStatus.NOT_FOUND, "Resource Not found", "NOT_FOUND", ex.getMessage());
     }
 
     @ExceptionHandler(BusinessException.class)
     public ProblemDetail handleBusinessException(BusinessException ex) {
         ErrorCode c = ex.getCode();
         return build(c.getStatus(), c.getTitle(), c.name(), ex.getMessage());
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ProblemDetail handleBadCredentialsException(BadCredentialsException ex) {
+        return build(HttpStatus.UNAUTHORIZED, "Bad credentials", "BAD_CREDENTIALS", ex.getMessage());
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)

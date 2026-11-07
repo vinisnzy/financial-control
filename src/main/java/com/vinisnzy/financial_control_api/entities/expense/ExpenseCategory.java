@@ -1,7 +1,7 @@
 package com.vinisnzy.financial_control_api.entities.expense;
 
 import com.vinisnzy.financial_control_api.entities.BaseEntity;
-import com.vinisnzy.financial_control_api.entities.User;
+import com.vinisnzy.financial_control_api.entities.auth.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

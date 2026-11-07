@@ -4,12 +4,12 @@ import com.vinisnzy.financial_control_api.dtos.common.PageResponse;
 import com.vinisnzy.financial_control_api.dtos.income.requests.CreateIncomeCategoryRequest;
 import com.vinisnzy.financial_control_api.dtos.income.requests.UpdateIncomeCategoryRequest;
 import com.vinisnzy.financial_control_api.dtos.income.responses.IncomeCategoryResponse;
-import com.vinisnzy.financial_control_api.entities.User;
+import com.vinisnzy.financial_control_api.entities.auth.User;
 import com.vinisnzy.financial_control_api.entities.income.IncomeCategory;
 import com.vinisnzy.financial_control_api.exceptions.NotFoundException;
 import com.vinisnzy.financial_control_api.mappers.income.IncomeCategoryMapper;
 import com.vinisnzy.financial_control_api.repositories.income.IncomeCategoryRepository;
-import com.vinisnzy.financial_control_api.services.UserService;
+import com.vinisnzy.financial_control_api.services.auth.UserService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 

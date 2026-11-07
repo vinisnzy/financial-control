@@ -1,11 +1,11 @@
-package com.vinisnzy.financial_control_api.services;
+package com.vinisnzy.financial_control_api.services.auth;
 
 import com.vinisnzy.financial_control_api.dtos.user.requests.UpdateUserRequest;
 import com.vinisnzy.financial_control_api.dtos.user.responses.UserResponse;
-import com.vinisnzy.financial_control_api.entities.User;
+import com.vinisnzy.financial_control_api.entities.auth.User;
 import com.vinisnzy.financial_control_api.exceptions.NotFoundException;
 import com.vinisnzy.financial_control_api.mappers.UserMapper;
-import com.vinisnzy.financial_control_api.repositories.UserRepository;
+import com.vinisnzy.financial_control_api.repositories.auth.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;

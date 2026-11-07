@@ -4,13 +4,13 @@ import com.vinisnzy.financial_control_api.dtos.billing.requests.CreatePaymentMet
 import com.vinisnzy.financial_control_api.dtos.billing.requests.UpdatePaymentMethodRequest;
 import com.vinisnzy.financial_control_api.dtos.billing.responses.PaymentMethodResponse;
 import com.vinisnzy.financial_control_api.dtos.common.PageResponse;
-import com.vinisnzy.financial_control_api.entities.User;
+import com.vinisnzy.financial_control_api.entities.auth.User;
 import com.vinisnzy.financial_control_api.entities.billing.BankAccount;
 import com.vinisnzy.financial_control_api.entities.billing.PaymentMethod;
 import com.vinisnzy.financial_control_api.exceptions.NotFoundException;
 import com.vinisnzy.financial_control_api.mappers.billing.PaymentMethodMapper;
 import com.vinisnzy.financial_control_api.repositories.billing.PaymentMethodRepository;
-import com.vinisnzy.financial_control_api.services.UserService;
+import com.vinisnzy.financial_control_api.services.auth.UserService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 

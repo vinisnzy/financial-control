@@ -4,12 +4,12 @@ import com.vinisnzy.financial_control_api.dtos.billing.requests.CreateBankAccoun
 import com.vinisnzy.financial_control_api.dtos.billing.requests.UpdateBankAccountRequest;
 import com.vinisnzy.financial_control_api.dtos.billing.responses.BankAccountResponse;
 import com.vinisnzy.financial_control_api.dtos.common.PageResponse;
-import com.vinisnzy.financial_control_api.entities.User;
+import com.vinisnzy.financial_control_api.entities.auth.User;
 import com.vinisnzy.financial_control_api.entities.billing.BankAccount;
 import com.vinisnzy.financial_control_api.exceptions.NotFoundException;
 import com.vinisnzy.financial_control_api.mappers.billing.BankAccountMapper;
 import com.vinisnzy.financial_control_api.repositories.billing.BankAccountRepository;
-import com.vinisnzy.financial_control_api.services.UserService;
+import com.vinisnzy.financial_control_api.services.auth.UserService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 

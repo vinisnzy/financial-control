@@ -7,7 +7,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum ErrorCode {
-    INSTALLMENT_HAS_PAID_PARTS(HttpStatus.CONFLICT, "Installment has paid parts");
+    INSTALLMENT_HAS_PAID_PARTS(HttpStatus.CONFLICT, "Installment has paid parts"),
+    USER_WITH_EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "User already exists");
 
     private final HttpStatus status;
     private final String title;

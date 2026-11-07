@@ -2,7 +2,7 @@ package com.vinisnzy.financial_control_api.mappers;
 
 import com.vinisnzy.financial_control_api.dtos.user.requests.UpdateUserRequest;
 import com.vinisnzy.financial_control_api.dtos.user.responses.UserResponse;
-import com.vinisnzy.financial_control_api.entities.User;
+import com.vinisnzy.financial_control_api.entities.auth.User;
 import com.vinisnzy.financial_control_api.mappers.annotation.IgnoreAuditFields;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
