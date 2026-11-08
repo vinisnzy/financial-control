@@ -1,9 +1,6 @@
 package com.vinisnzy.financial_control_api.controllers.auth;
 
-import com.vinisnzy.financial_control_api.dtos.auth.RefreshRequest;
-import com.vinisnzy.financial_control_api.dtos.auth.SignInRequest;
-import com.vinisnzy.financial_control_api.dtos.auth.SignInResponse;
-import com.vinisnzy.financial_control_api.dtos.auth.SignUpRequest;
+import com.vinisnzy.financial_control_api.dtos.auth.*;
 import com.vinisnzy.financial_control_api.services.auth.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -39,5 +36,9 @@ public class AuthController {
         return ResponseEntity.ok(this.service.refresh(data));
     }
 
-    // TODO: Logout
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@Valid @RequestBody LogoutRequest data) {
+        this.service.logout(data);
+        return ResponseEntity.noContent().build();
+    }
 }

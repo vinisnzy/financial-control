@@ -1,10 +1,7 @@
 package com.vinisnzy.financial_control_api.services.auth;
 
 import com.vinisnzy.financial_control_api.config.auth.TokenProvider;
-import com.vinisnzy.financial_control_api.dtos.auth.RefreshRequest;
-import com.vinisnzy.financial_control_api.dtos.auth.SignInRequest;
-import com.vinisnzy.financial_control_api.dtos.auth.SignInResponse;
-import com.vinisnzy.financial_control_api.dtos.auth.SignUpRequest;
+import com.vinisnzy.financial_control_api.dtos.auth.*;
 import com.vinisnzy.financial_control_api.entities.auth.RefreshToken;
 import com.vinisnzy.financial_control_api.entities.auth.User;
 import com.vinisnzy.financial_control_api.exceptions.BusinessException;
@@ -106,6 +103,12 @@ public class AuthService implements UserDetailsService {
         old.setRevokedAt(Instant.now());
         User user = old.getUser();
         return new SignInResponse(tokenProvider.generateToken(user), issueNewRefreshToken(user, old.getSessionId()));
+    }
+
+    @Transactional
+    public void logout(LogoutRequest data) {
+        this.refreshTokenRepository.findByTokenHash(sha256(data.refreshToken()))
+                .ifPresent(rt -> this.refreshTokenRepository.revokeSession(rt.getSessionId(), Instant.now()));
     }
 
     private Instant genRefreshExpirationDate() {
