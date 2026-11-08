@@ -14,6 +14,8 @@ import com.vinisnzy.financial_control_api.mappers.income.IncomeMapper;
 import com.vinisnzy.financial_control_api.repositories.income.IncomeRepository;
 import com.vinisnzy.financial_control_api.services.auth.UserService;
 import com.vinisnzy.financial_control_api.services.billing.BankAccountService;
+import com.vinisnzy.financial_control_api.services.common.PeriodValidator;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -41,12 +43,11 @@ public class IncomeService {
         return this.repository.findByIdAndUserId(id, userId).orElseThrow(() -> NotFoundException.of("Income", id));
     }
 
-    public PageResponse<IncomeResponse> getAll(UUID userId, Pageable pageable) {
-        return PageResponse.from(this.repository.findByUserId(userId, pageable), this.mapper::toResponse);
-    }
-
     public PageResponse<IncomeResponse> getAll(LocalDate start, LocalDate end, UUID userId, Pageable pageable) {
-        return PageResponse.from(this.repository.findByUserIdAndExpectedAtBetween(userId, start, end, pageable), this.mapper::toResponse);
+        Page<Income> page = PeriodValidator.hasPeriod(start, end)
+                ? this.repository.findByUserIdAndExpectedAtBetween(userId, start, end, pageable)
+                : this.repository.findByUserId(userId, pageable);
+        return PageResponse.from(page, this.mapper::toResponse);
     }
 
     public IncomeResponse getById(UUID id, UUID userId) {
@@ -57,20 +58,18 @@ public class IncomeService {
         return PageResponse.from(this.repository.findByNameContainingIgnoreCaseAndUserId(name, userId, pageable), this.mapper::toResponse);
     }
 
-    public PageResponse<IncomeResponse> getByBankAccount(UUID bankAccountId, UUID userId, Pageable pageable) {
-        return PageResponse.from(this.repository.findByBankAccountIdAndUserId(bankAccountId, userId, pageable), this.mapper::toResponse);
-    }
-
     public PageResponse<IncomeResponse> getByBankAccount(UUID bankAccountId, LocalDate start, LocalDate end, UUID userId, Pageable pageable) {
-        return PageResponse.from(this.repository.findByBankAccountIdAndUserIdAndExpectedAtBetween(bankAccountId, userId, start, end, pageable), this.mapper::toResponse);
-    }
-
-    public PageResponse<IncomeResponse> getByIncomeCategory(UUID incomeCategoryId, UUID userId, Pageable pageable) {
-        return PageResponse.from(this.repository.findByIncomeCategoryIdAndUserId(incomeCategoryId, userId, pageable), this.mapper::toResponse);
+        Page<Income> page = PeriodValidator.hasPeriod(start, end)
+                ? this.repository.findByBankAccountIdAndUserIdAndExpectedAtBetween(bankAccountId, userId, start, end, pageable)
+                : this.repository.findByBankAccountIdAndUserId(bankAccountId, userId, pageable);
+        return PageResponse.from(page, this.mapper::toResponse);
     }
 
     public PageResponse<IncomeResponse> getByIncomeCategory(UUID incomeCategoryId, LocalDate start, LocalDate end, UUID userId, Pageable pageable) {
-        return PageResponse.from(this.repository.findByIncomeCategoryIdAndUserIdAndExpectedAtBetween(incomeCategoryId, userId, start, end, pageable), this.mapper::toResponse);
+        Page<Income> page = PeriodValidator.hasPeriod(start, end)
+                ? this.repository.findByIncomeCategoryIdAndUserIdAndExpectedAtBetween(incomeCategoryId, userId, start, end, pageable)
+                : this.repository.findByIncomeCategoryIdAndUserId(incomeCategoryId, userId, pageable);
+        return PageResponse.from(page, this.mapper::toResponse);
     }
 
     public IncomeResponse create(UUID userId, CreateIncomeRequest data) {

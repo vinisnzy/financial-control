@@ -1,6 +1,7 @@
 package com.vinisnzy.financial_control_api.services.auth;
 
 import com.vinisnzy.financial_control_api.config.auth.TokenProvider;
+import com.vinisnzy.financial_control_api.dtos.auth.RefreshRequest;
 import com.vinisnzy.financial_control_api.dtos.auth.SignInRequest;
 import com.vinisnzy.financial_control_api.dtos.auth.SignInResponse;
 import com.vinisnzy.financial_control_api.dtos.auth.SignUpRequest;
@@ -91,8 +92,8 @@ public class AuthService implements UserDetailsService {
     }
 
     @Transactional(noRollbackFor = BadCredentialsException.class)
-    public SignInResponse refresh(String refreshToken) {
-        RefreshToken old = this.refreshTokenRepository.findByTokenHash(sha256(refreshToken))
+    public SignInResponse refresh(RefreshRequest data) {
+        RefreshToken old = this.refreshTokenRepository.findByTokenHash(sha256(data.refreshToken()))
                 .orElseThrow(() -> new BadCredentialsException("Invalid refresh token"));
         if (old.getRevokedAt() != null) {
             // Refresh token reuse, potential leak

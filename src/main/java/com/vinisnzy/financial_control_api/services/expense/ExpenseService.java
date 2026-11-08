@@ -14,6 +14,8 @@ import com.vinisnzy.financial_control_api.mappers.expense.ExpenseMapper;
 import com.vinisnzy.financial_control_api.repositories.expense.ExpenseRepository;
 import com.vinisnzy.financial_control_api.services.auth.UserService;
 import com.vinisnzy.financial_control_api.services.billing.PaymentMethodService;
+import com.vinisnzy.financial_control_api.services.common.PeriodValidator;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -46,13 +48,11 @@ public class ExpenseService {
                 .orElseThrow(() -> NotFoundException.of("Expense", id));
     }
 
-    public PageResponse<ExpenseResponse> getAll(UUID userId, Pageable pageable) {
-        return PageResponse.from(this.repository.findByUserId(userId, pageable), this.mapper::toResponse);
-    }
-
     public PageResponse<ExpenseResponse> getAll(LocalDate start, LocalDate end, UUID userId, Pageable pageable) {
-        return PageResponse.from(this.repository
-                .findByUserIdAndDueDateBetween(userId, start, end, pageable), this.mapper::toResponse);
+        Page<Expense> page = PeriodValidator.hasPeriod(start, end)
+                ? this.repository.findByUserIdAndDueDateBetween(userId, start, end, pageable)
+                : this.repository.findByUserId(userId, pageable);
+        return PageResponse.from(page, this.mapper::toResponse);
     }
 
     public ExpenseResponse getById(UUID id, UUID userId) {
@@ -64,24 +64,18 @@ public class ExpenseService {
                 .findByNameContainingIgnoreCaseAndUserId(name, userId, pageable), this.mapper::toResponse);
     }
 
-    public PageResponse<ExpenseResponse> getByExpenseCategory(UUID expenseCategoryId, UUID userId, Pageable pageable) {
-        return PageResponse.from(this.repository
-                .findByExpenseCategoryIdAndUserId(expenseCategoryId, userId, pageable), this.mapper::toResponse);
-    }
-
     public PageResponse<ExpenseResponse> getByExpenseCategory(UUID expenseCategoryId, LocalDate start, LocalDate end, UUID userId, Pageable pageable) {
-        return PageResponse.from(this.repository
-                .findByExpenseCategoryIdAndUserIdAndDueDateBetween(expenseCategoryId, userId, start, end, pageable), this.mapper::toResponse);
-    }
-
-    public PageResponse<ExpenseResponse> getByPaymentMethod(UUID paymentMethodId, UUID userId, Pageable pageable) {
-        return PageResponse.from(this.repository
-                .findByPaymentMethodIdAndUserId(paymentMethodId, userId, pageable), this.mapper::toResponse);
+        Page<Expense> page = PeriodValidator.hasPeriod(start, end)
+                ? this.repository.findByExpenseCategoryIdAndUserIdAndDueDateBetween(expenseCategoryId, userId, start, end, pageable)
+                : this.repository.findByExpenseCategoryIdAndUserId(expenseCategoryId, userId, pageable);
+        return PageResponse.from(page, this.mapper::toResponse);
     }
 
     public PageResponse<ExpenseResponse> getByPaymentMethod(UUID paymentMethodId, LocalDate start, LocalDate end, UUID userId, Pageable pageable) {
-        return PageResponse.from(this.repository
-                .findByPaymentMethodIdAndUserIdAndDueDateBetween(paymentMethodId, userId, start, end, pageable), this.mapper::toResponse);
+        Page<Expense> page = PeriodValidator.hasPeriod(start, end)
+                ? this.repository.findByPaymentMethodIdAndUserIdAndDueDateBetween(paymentMethodId, userId, start, end, pageable)
+                : this.repository.findByPaymentMethodIdAndUserId(paymentMethodId, userId, pageable);
+        return PageResponse.from(page, this.mapper::toResponse);
     }
 
     public PageResponse<ExpenseResponse> getByInstallmentExpense(UUID installmentExpenseId, UUID userId, Pageable pageable) {
