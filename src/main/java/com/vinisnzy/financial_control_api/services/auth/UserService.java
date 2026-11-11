@@ -15,7 +15,7 @@ public class UserService {
     private final UserRepository repository;
     private final UserMapper mapper;
 
-    private UserService(UserRepository repository, UserMapper mapper) {
+    public UserService(UserRepository repository, UserMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
     }
