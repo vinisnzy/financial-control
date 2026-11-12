@@ -55,8 +55,6 @@ class IncomeServiceTest {
     IncomeCategoryService incomeCategoryService;
     @Mock
     BankAccountService bankAccountService;
-    @Mock
-    FixedIncomeService fixedIncomeService;
 
     @InjectMocks
     IncomeService service;

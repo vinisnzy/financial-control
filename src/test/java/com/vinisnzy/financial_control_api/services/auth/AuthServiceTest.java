@@ -21,7 +21,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -84,21 +83,6 @@ class AuthServiceTest {
         rt.setExpiresAt(expiresAt);
         rt.setRevokedAt(revokedAt);
         return rt;
-    }
-
-    @Test
-    void loadUserByUsername_shouldReturnUser() {
-        when(userRepository.findByEmail("vini@test.com")).thenReturn(Optional.of(user));
-
-        assertThat(service.loadUserByUsername("vini@test.com")).isSameAs(user);
-    }
-
-    @Test
-    void loadUserByUsername_whenNotFound_shouldThrow() {
-        when(userRepository.findByEmail("x@test.com")).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> service.loadUserByUsername("x@test.com"))
-                .isInstanceOf(UsernameNotFoundException.class);
     }
 
     @Test

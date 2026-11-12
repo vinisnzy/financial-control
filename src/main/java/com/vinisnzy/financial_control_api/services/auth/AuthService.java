@@ -12,9 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +27,7 @@ import java.util.HexFormat;
 import java.util.UUID;
 
 @Service
-public class AuthService implements UserDetailsService {
+public class AuthService {
 
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -47,12 +44,6 @@ public class AuthService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
         this.tokenProvider = tokenProvider;
         this.authenticationManager = authenticationManager;
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return this.userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with " + username));
     }
 
     public void signUp(SignUpRequest data) {

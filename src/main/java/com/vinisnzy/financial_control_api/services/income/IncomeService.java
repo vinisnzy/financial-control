@@ -31,7 +31,7 @@ public class IncomeService {
     private final IncomeCategoryService incomeCategoryService;
     private final BankAccountService bankAccountService;
 
-    public IncomeService(IncomeRepository repository, IncomeMapper mapper, UserService userService, IncomeCategoryService incomeCategoryService, BankAccountService bankAccountService, FixedIncomeService fixedIncomeService) {
+    public IncomeService(IncomeRepository repository, IncomeMapper mapper, UserService userService, IncomeCategoryService incomeCategoryService, BankAccountService bankAccountService) {
         this.repository = repository;
         this.mapper = mapper;
         this.userService = userService;
