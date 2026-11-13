@@ -3,7 +3,7 @@ package com.vinisnzy.financial_control_api.repositories.expense;
 import com.vinisnzy.financial_control_api.TestcontainersConfig;
 import com.vinisnzy.financial_control_api.config.JpaConfig;
 import com.vinisnzy.financial_control_api.entities.expense.ExpenseCategory;
-import com.vinisnzy.financial_control_api.utils.PersistUtil;
+import com.vinisnzy.financial_control_api.repositories.utils.PersistUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;

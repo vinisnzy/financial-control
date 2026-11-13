@@ -1,4 +1,4 @@
-package com.vinisnzy.financial_control_api.utils;
+package com.vinisnzy.financial_control_api.repositories.utils;
 
 import com.vinisnzy.financial_control_api.entities.auth.RefreshToken;
 import com.vinisnzy.financial_control_api.entities.auth.User;
