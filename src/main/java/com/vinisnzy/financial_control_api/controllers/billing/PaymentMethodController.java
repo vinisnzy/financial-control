@@ -39,7 +39,7 @@ public class PaymentMethodController {
             @PathVariable UUID id,
             @AuthenticationPrincipal User user
     ) {
-        return ResponseEntity.ok(this.service.getById(user.getId(), id));
+        return ResponseEntity.ok(this.service.getById(id, user.getId()));
     }
 
     @GetMapping("/bank-account/{bankAccountId}")
