@@ -44,6 +44,7 @@ public class ExpenseCategoryService {
         ExpenseCategory entity = this.mapper.toEntity(data);
         User user = this.userService.getEntity(userId);
         entity.setUser(user);
+        entity.setIsDefault(false);
         this.repository.save(entity);
         return this.mapper.toResponse(entity);
     }
