@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -26,7 +27,13 @@ public class TokenProvider {
     public String generateToken(User user) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(jwtSecret);
-            return JWT.create().withSubject(user.getUsername()).withClaim("userId", user.getId().toString()).withExpiresAt(this.genAccessExpirationDate()).sign(algorithm);
+            return JWT.create()
+                    .withSubject(user.getUsername())
+                    .withClaim("userId", user.getId().toString())
+                    .withExpiresAt(this.genAccessExpirationDate())
+                    .withJWTId(UUID.randomUUID().toString())
+                    .withIssuedAt(Instant.now())
+                    .sign(algorithm);
         } catch (JWTCreationException e) {
             log.error("JWT creation exception", e);
             throw new JWTCreationException("Error while generating token", e);
