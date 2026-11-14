@@ -6,6 +6,11 @@ import com.vinisnzy.financial_control_api.dtos.expense.requests.UpdateInstallmen
 import com.vinisnzy.financial_control_api.dtos.expense.responses.InstallmentExpenseResponse;
 import com.vinisnzy.financial_control_api.entities.auth.User;
 import com.vinisnzy.financial_control_api.services.expense.InstallmentExpenseService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+@Tag(name = "Installment Expenses", description = "Installment purchase management")
+@ApiResponse(responseCode = "401", description = "Missing or invalid access token", content = @Content)
 @RestController
 @RequestMapping("/installment-expenses")
 public class InstallmentExpenseController {
@@ -26,6 +33,10 @@ public class InstallmentExpenseController {
         this.service = service;
     }
 
+    @Operation(
+            summary = "List installment expenses",
+            description = "Returns a page of the authenticated user's installment expenses.")
+    @ApiResponse(responseCode = "200", description = "Installment expenses listed successfully")
     @GetMapping
     public ResponseEntity<PageResponse<InstallmentExpenseResponse>> getAll(
             @ParameterObject Pageable pagination,
@@ -34,6 +45,11 @@ public class InstallmentExpenseController {
         return ResponseEntity.ok(this.service.getAll(user.getId(), pagination));
     }
 
+    @Operation(summary = "Get an installment expense by id")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Installment expense found"),
+            @ApiResponse(responseCode = "404", description = "Installment expense not found", content = @Content)
+    })
     @GetMapping("/{id}")
     public ResponseEntity<InstallmentExpenseResponse> getById(
             @PathVariable UUID id,
@@ -42,6 +58,14 @@ public class InstallmentExpenseController {
         return ResponseEntity.ok(this.service.getById(id, user.getId()));
     }
 
+    @Operation(
+            summary = "Create an installment expense",
+            description = "Creates the installment expense and generates one expense for each installment.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Installment expense created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Referenced expense category or payment method not found", content = @Content)
+    })
     @PostMapping
     public ResponseEntity<InstallmentExpenseResponse> create(
             @Valid @RequestBody CreateInstallmentExpenseRequest data,
@@ -50,6 +74,17 @@ public class InstallmentExpenseController {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.service.create(data, user.getId()));
     }
 
+    @Operation(
+            summary = "Update an installment expense",
+            description = "Partially updates the installment expense. Changing the total amount, the number of "
+                    + "installments or the first due date regenerates its installments, which is not allowed "
+                    + "once any of them is paid.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Installment expense updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Installment expense or referenced resource not found", content = @Content),
+            @ApiResponse(responseCode = "409", description = "Schedule cannot change because there are paid installments", content = @Content)
+    })
     @PatchMapping("/{id}")
     public ResponseEntity<InstallmentExpenseResponse> update(
             @PathVariable UUID id,
@@ -59,6 +94,11 @@ public class InstallmentExpenseController {
         return ResponseEntity.ok(this.service.update(id, data, user.getId()));
     }
 
+    @Operation(summary = "Delete an installment expense")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Installment expense deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Installment expense not found", content = @Content)
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
             @PathVariable UUID id,
