@@ -4,9 +4,12 @@ import com.vinisnzy.financial_control_api.entities.auth.RefreshToken;
 import com.vinisnzy.financial_control_api.entities.auth.User;
 import com.vinisnzy.financial_control_api.entities.billing.BankAccount;
 import com.vinisnzy.financial_control_api.entities.billing.PaymentMethod;
+import com.vinisnzy.financial_control_api.entities.expense.Expense;
 import com.vinisnzy.financial_control_api.entities.expense.ExpenseCategory;
 import com.vinisnzy.financial_control_api.entities.expense.FixedExpense;
+import com.vinisnzy.financial_control_api.entities.expense.InstallmentExpense;
 import com.vinisnzy.financial_control_api.entities.income.FixedIncome;
+import com.vinisnzy.financial_control_api.entities.income.Income;
 import com.vinisnzy.financial_control_api.entities.income.IncomeCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
@@ -87,6 +90,52 @@ public class PersistUtil {
         fixedIncome.setStartDate(startDate);
         fixedIncome.setEndDate(endDate);
         return em.persist(fixedIncome);
+    }
+
+    public Expense persistExpense(User user, ExpenseCategory category, PaymentMethod paymentMethod,
+                                  BigDecimal amount, LocalDate dueDate, LocalDate paidAt) {
+        return persistExpense(user, category, paymentMethod, amount, dueDate, paidAt, null);
+    }
+
+    public Expense persistExpense(User user, ExpenseCategory category, PaymentMethod paymentMethod,
+                                  BigDecimal amount, LocalDate dueDate, LocalDate paidAt,
+                                  InstallmentExpense installmentExpense) {
+        Expense expense = new Expense();
+        expense.setName("expense");
+        expense.setAmount(amount);
+        expense.setUser(user);
+        expense.setExpenseCategory(category);
+        expense.setPaymentMethod(paymentMethod);
+        expense.setDueDate(dueDate);
+        expense.setPaidAt(paidAt);
+        expense.setInstallmentExpense(installmentExpense);
+        return em.persist(expense);
+    }
+
+    public InstallmentExpense persistInstallmentExpense(User user, ExpenseCategory category,
+                                                        PaymentMethod paymentMethod, LocalDate firstDueDate) {
+        InstallmentExpense installmentExpense = new InstallmentExpense();
+        installmentExpense.setName("installment");
+        installmentExpense.setTotalAmount(new BigDecimal(0));
+        installmentExpense.setInstallments((short) 1);
+        installmentExpense.setUser(user);
+        installmentExpense.setExpenseCategory(category);
+        installmentExpense.setPaymentMethod(paymentMethod);
+        installmentExpense.setFirstDueDate(firstDueDate);
+        return em.persist(installmentExpense);
+    }
+
+    public Income persistIncome(User user, IncomeCategory category, BankAccount bankAccount,
+                                BigDecimal amount, LocalDate expectedAt, LocalDate receivedAt) {
+        Income income = new Income();
+        income.setName("income");
+        income.setAmount(amount);
+        income.setUser(user);
+        income.setIncomeCategory(category);
+        income.setBankAccount(bankAccount);
+        income.setExpectedAt(expectedAt);
+        income.setReceivedAt(receivedAt);
+        return em.persist(income);
     }
 
     public RefreshToken persistRefreshToken(User user, String tokenHash, UUID sessionId, Instant expiresAt, Instant revokedAt) {
