@@ -8,6 +8,7 @@ import jakarta.validation.Path;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.core.PropertyReferenceException;
 import org.springframework.http.*;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -52,6 +53,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ProblemDetail handleBadCredentialsException(BadCredentialsException ex) {
         return build(HttpStatus.UNAUTHORIZED, "Bad credentials", "BAD_CREDENTIALS", ex.getMessage());
+    }
+
+    @ExceptionHandler(PropertyReferenceException.class)
+    public ProblemDetail handleInvalidProperty(PropertyReferenceException ex) {
+        return build(HttpStatus.BAD_REQUEST, "Invalid Parameter", "INVALID_PARAMETER",
+                "Invalid sort property: '%s'.".formatted(ex.getPropertyName()));
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
