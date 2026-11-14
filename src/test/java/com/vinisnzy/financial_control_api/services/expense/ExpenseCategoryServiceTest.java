@@ -28,10 +28,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ExpenseCategoryServiceTest {
@@ -64,6 +61,7 @@ class ExpenseCategoryServiceTest {
         ReflectionTestUtils.setField(entity, "id", categoryId);
         entity.setName("Food");
         entity.setColor("#FF0000");
+        entity.setIsDefault(false);
         entity.setUser(user);
 
         response = new ExpenseCategoryResponse(categoryId, "Food", "#FF0000", Instant.now(), null);
@@ -152,7 +150,7 @@ class ExpenseCategoryServiceTest {
     @Test
     void update_shouldApplyChangesAndSave() {
         var request = new UpdateExpenseCategoryRequest("Market", null);
-        when(repository.findByIdAndUserIdOrDefault(categoryId, userId)).thenReturn(Optional.of(entity));
+        when(repository.findByIdAndUserId(categoryId, userId)).thenReturn(Optional.of(entity));
         when(mapper.toResponse(entity)).thenReturn(response);
 
         assertThat(service.update(categoryId, request, userId)).isEqualTo(response);
@@ -164,7 +162,7 @@ class ExpenseCategoryServiceTest {
     @Test
     void update_whenNotFound_shouldThrowAndNotSave() {
         var request = new UpdateExpenseCategoryRequest("Market", null);
-        when(repository.findByIdAndUserIdOrDefault(categoryId, userId)).thenReturn(Optional.empty());
+        when(repository.findByIdAndUserId(categoryId, userId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.update(categoryId, request, userId)).isInstanceOf(NotFoundException.class);
 
@@ -173,7 +171,7 @@ class ExpenseCategoryServiceTest {
 
     @Test
     void delete_shouldDeleteEntity() {
-        when(repository.findByIdAndUserIdOrDefault(categoryId, userId)).thenReturn(Optional.of(entity));
+        when(repository.findByIdAndUserId(categoryId, userId)).thenReturn(Optional.of(entity));
 
         service.delete(categoryId, userId);
 
@@ -182,7 +180,7 @@ class ExpenseCategoryServiceTest {
 
     @Test
     void delete_whenNotFound_shouldNotDelete() {
-        when(repository.findByIdAndUserIdOrDefault(categoryId, userId)).thenReturn(Optional.empty());
+        when(repository.findByIdAndUserId(categoryId, userId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.delete(categoryId, userId)).isInstanceOf(NotFoundException.class);
 

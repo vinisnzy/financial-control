@@ -10,6 +10,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface IncomeCategoryRepository extends JpaRepository<IncomeCategory, UUID> {
+    Optional<IncomeCategory> findByIdAndUserId(UUID id, UUID userId);
+
     @Query("""
             SELECT c FROM IncomeCategory c
             WHERE c.id = :id AND (c.user.id = :userId OR c.isDefault = true)

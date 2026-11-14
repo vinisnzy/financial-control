@@ -32,6 +32,11 @@ public class IncomeCategoryService {
                 .orElseThrow(() -> NotFoundException.of("Income", id));
     }
 
+    public IncomeCategory getEntityOwnedByIdOrThrow(UUID id, UUID userId) {
+        return this.repository.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> NotFoundException.of("Income", id));
+    }
+
     public PageResponse<IncomeCategoryResponse> getAll(UUID userId, Pageable pageable) {
         return PageResponse.from(this.repository.findByUserIdOrDefault(userId, pageable), this.mapper::toResponse);
     }
@@ -50,14 +55,14 @@ public class IncomeCategoryService {
     }
 
     public IncomeCategoryResponse update(UUID id, UpdateIncomeCategoryRequest data, UUID userId) {
-        IncomeCategory entity = this.getEntityOwnedOrDefaultByIdOrThrow(id, userId);
+        IncomeCategory entity = this.getEntityOwnedByIdOrThrow(id, userId);
         this.mapper.updateEntity(data, entity);
         this.repository.save(entity);
         return this.mapper.toResponse(entity);
     }
 
     public void delete(UUID id, UUID userId) {
-        IncomeCategory entity = this.getEntityOwnedOrDefaultByIdOrThrow(id, userId);
+        IncomeCategory entity = this.getEntityOwnedByIdOrThrow(id, userId);
         this.repository.delete(entity);
     }
 }

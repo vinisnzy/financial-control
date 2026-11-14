@@ -32,6 +32,11 @@ public class ExpenseCategoryService {
                 .orElseThrow(() -> NotFoundException.of("Expense category", id));
     }
 
+    public ExpenseCategory getEntityOwnedByIdOrThrow(UUID id, UUID userId) {
+        return this.repository.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> NotFoundException.of("Expense category", id));
+    }
+
     public PageResponse<ExpenseCategoryResponse> getAll(UUID userId, Pageable pageable) {
         return PageResponse.from(this.repository.findByUserIdOrDefault(userId, pageable), this.mapper::toResponse);
     }
@@ -50,14 +55,14 @@ public class ExpenseCategoryService {
     }
 
     public ExpenseCategoryResponse update(UUID id, UpdateExpenseCategoryRequest data, UUID userId) {
-        ExpenseCategory entity = this.getEntityOwnedOrDefaultByIdOrThrow(id, userId);
+        ExpenseCategory entity = this.getEntityOwnedByIdOrThrow(id, userId);
         this.mapper.updateEntity(data, entity);
         this.repository.save(entity);
         return this.mapper.toResponse(entity);
     }
 
     public void delete(UUID id, UUID userId) {
-        ExpenseCategory entity = this.getEntityOwnedOrDefaultByIdOrThrow(id, userId);
+        ExpenseCategory entity = this.getEntityOwnedByIdOrThrow(id, userId);
         this.repository.delete(entity);
     }
 }
