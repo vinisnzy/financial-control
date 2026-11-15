@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import com.vinisnzy.financial_control_api.pagination.SortableBy;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -50,7 +51,7 @@ public class IncomeController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
             @Parameter(description = "Period end date (yyyy-MM-dd)")
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
-            @ParameterObject Pageable pagination,
+            @ParameterObject @SortableBy(IncomeSortField.class) Pageable pagination,
             @AuthenticationPrincipal User user
     ) {
         return ResponseEntity.ok(this.service.getAll(start, end, user.getId(), pagination));
@@ -77,7 +78,7 @@ public class IncomeController {
     public ResponseEntity<PageResponse<IncomeResponse>> getByName(
             @Parameter(description = "Text to search in the income name")
             @RequestParam String name,
-            @ParameterObject Pageable pagination,
+            @ParameterObject @SortableBy(IncomeSortField.class) Pageable pagination,
             @AuthenticationPrincipal User user
     ) {
         return ResponseEntity.ok(this.service.getByName(name, user.getId(), pagination));
@@ -98,7 +99,7 @@ public class IncomeController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
             @Parameter(description = "Period end date (yyyy-MM-dd)")
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
-            @ParameterObject Pageable pagination,
+            @ParameterObject @SortableBy(IncomeSortField.class) Pageable pagination,
             @AuthenticationPrincipal User user
     ) {
         return ResponseEntity.ok(this.service.getByBankAccount(bankAccountId, start, end, user.getId(), pagination));
@@ -119,7 +120,7 @@ public class IncomeController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
             @Parameter(description = "Period end date (yyyy-MM-dd)")
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
-            @ParameterObject Pageable pagination,
+            @ParameterObject @SortableBy(IncomeSortField.class) Pageable pagination,
             @AuthenticationPrincipal User user
     ) {
         return ResponseEntity.ok(this.service.getByIncomeCategory(incomeCategoryId, start, end, user.getId(), pagination));

@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import com.vinisnzy.financial_control_api.pagination.SortableBy;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -39,7 +40,7 @@ public class FixedExpenseController {
     @ApiResponse(responseCode = "200", description = "Fixed expenses listed successfully")
     @GetMapping
     public ResponseEntity<PageResponse<FixedExpenseResponse>> getAll(
-            @ParameterObject Pageable pagination,
+            @ParameterObject @SortableBy(FixedExpenseSortField.class) Pageable pagination,
             @AuthenticationPrincipal User user
     ) {
         return ResponseEntity.ok(this.service.getAll(user.getId(), pagination));
@@ -65,7 +66,7 @@ public class FixedExpenseController {
     @GetMapping("/expense-category/{expenseCategoryId}")
     public ResponseEntity<PageResponse<FixedExpenseResponse>> getByExpenseCategory(
             @PathVariable UUID expenseCategoryId,
-            @ParameterObject Pageable pagination,
+            @ParameterObject @SortableBy(FixedExpenseSortField.class) Pageable pagination,
             @AuthenticationPrincipal User user
     ) {
         return ResponseEntity.ok(this.service.getByExpenseCategory(expenseCategoryId, user.getId(), pagination));

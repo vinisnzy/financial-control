@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import com.vinisnzy.financial_control_api.pagination.SortableBy;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -50,7 +51,7 @@ public class ExpenseController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
             @Parameter(description = "Period end date (yyyy-MM-dd)")
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
-            @ParameterObject Pageable pagination,
+            @ParameterObject @SortableBy(ExpenseSortField.class) Pageable pagination,
             @AuthenticationPrincipal User user
     ) {
         return ResponseEntity.ok(this.service.getAll(start, end, user.getId(), pagination));
@@ -77,7 +78,7 @@ public class ExpenseController {
     public ResponseEntity<PageResponse<ExpenseResponse>> getByName(
             @Parameter(description = "Text to search in the expense name")
             @RequestParam String name,
-            @ParameterObject Pageable pagination,
+            @ParameterObject @SortableBy(ExpenseSortField.class) Pageable pagination,
             @AuthenticationPrincipal User user
     ) {
         return ResponseEntity.ok(this.service.getByName(name, user.getId(), pagination));
@@ -98,7 +99,7 @@ public class ExpenseController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
             @Parameter(description = "Period end date (yyyy-MM-dd)")
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
-            @ParameterObject Pageable pagination,
+            @ParameterObject @SortableBy(ExpenseSortField.class) Pageable pagination,
             @AuthenticationPrincipal User user
     ) {
         return ResponseEntity.ok(this.service.getByExpenseCategory(expenseCategoryId, start, end, user.getId(), pagination));
@@ -119,7 +120,7 @@ public class ExpenseController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
             @Parameter(description = "Period end date (yyyy-MM-dd)")
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
-            @ParameterObject Pageable pagination,
+            @ParameterObject @SortableBy(ExpenseSortField.class) Pageable pagination,
             @AuthenticationPrincipal User user
     ) {
         return ResponseEntity.ok(this.service.getByPaymentMethod(paymentMethodId, start, end, user.getId(), pagination));
@@ -132,7 +133,7 @@ public class ExpenseController {
     @GetMapping("/installment-expense/{installmentExpenseId}")
     public ResponseEntity<PageResponse<ExpenseResponse>> getByInstallmentExpense(
             @PathVariable UUID installmentExpenseId,
-            @ParameterObject Pageable pagination,
+            @ParameterObject @SortableBy(ExpenseSortField.class) Pageable pagination,
             @AuthenticationPrincipal User user
     ) {
         return ResponseEntity.ok(this.service.getByInstallmentExpense(installmentExpenseId, user.getId(), pagination));

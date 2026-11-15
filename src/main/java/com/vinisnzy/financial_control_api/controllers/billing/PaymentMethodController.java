@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import com.vinisnzy.financial_control_api.pagination.SortableBy;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -39,7 +40,7 @@ public class PaymentMethodController {
     @ApiResponse(responseCode = "200", description = "Payment methods listed successfully")
     @GetMapping
     public ResponseEntity<PageResponse<PaymentMethodResponse>> getAll(
-            @ParameterObject Pageable pagination,
+            @ParameterObject @SortableBy(PaymentMethodSortField.class) Pageable pagination,
             @AuthenticationPrincipal User user
     ) {
         return ResponseEntity.ok(this.service.getAll(user.getId(), pagination));
@@ -65,7 +66,7 @@ public class PaymentMethodController {
     @GetMapping("/bank-account/{bankAccountId}")
     public ResponseEntity<PageResponse<PaymentMethodResponse>> getByBankAccountId(
             @PathVariable UUID bankAccountId,
-            @ParameterObject Pageable pagination,
+            @ParameterObject @SortableBy(PaymentMethodSortField.class) Pageable pagination,
             @AuthenticationPrincipal User user
     ) {
         return ResponseEntity.ok(this.service.getByBankAccountId(user.getId(), bankAccountId, pagination));
