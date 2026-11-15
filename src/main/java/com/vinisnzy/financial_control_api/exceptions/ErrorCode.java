@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
     INSTALLMENT_HAS_PAID_PARTS(HttpStatus.CONFLICT, "Installment has paid parts"),
     USER_WITH_EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "User already exists"),
-    INVALID_PERIOD(HttpStatus.BAD_REQUEST, "Invalid period");
+    INVALID_PERIOD(HttpStatus.BAD_REQUEST, "Invalid period"),
+    INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "Invalid Parameter");
 
     private final HttpStatus status;
     private final String title;
