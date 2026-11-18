@@ -2,6 +2,7 @@ package com.vinisnzy.financial_control_api.e2e;
 
 import com.jayway.jsonpath.JsonPath;
 import com.vinisnzy.financial_control_api.TestcontainersConfig;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -16,6 +17,7 @@ import java.util.UUID;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Tag("integration")
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(TestcontainersConfig.class)

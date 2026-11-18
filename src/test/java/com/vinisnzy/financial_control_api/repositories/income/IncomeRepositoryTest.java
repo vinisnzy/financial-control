@@ -5,6 +5,7 @@ import com.vinisnzy.financial_control_api.config.JpaConfig;
 import com.vinisnzy.financial_control_api.dtos.dashboard.CategoryTotal;
 import com.vinisnzy.financial_control_api.dtos.dashboard.MonthTotal;
 import com.vinisnzy.financial_control_api.repositories.utils.PersistUtil;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
@@ -17,6 +18,7 @@ import java.time.LocalDate;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 
+@Tag("integration")
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import({TestcontainersConfig.class, JpaConfig.class, PersistUtil.class})
