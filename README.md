@@ -18,6 +18,19 @@ próprios dados.
 ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)
 ![JUnit 5](https://img.shields.io/badge/JUnit_5-25A162?style=for-the-badge&logo=junit5&logoColor=white)
 ![Testcontainers](https://img.shields.io/badge/Testcontainers-291A3F?style=for-the-badge&logo=testcontainers&logoColor=white)
+![Render](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=black)
+![Neon](https://img.shields.io/badge/Neon-00E599?style=for-the-badge&logo=neon&logoColor=black)
+
+🌐 A API está no ar em **https://financial-control-spring.onrender.com**:
+
+### 📚 Documentação da API
+
+- 🟢 [**Swagger UI**](https://financial-control-spring.onrender.com/docs): Padrão de mercado e amplamente conhecida.
+- ✨ [**Scalar**](https://financial-control-spring.onrender.com/docs/scalar): Documentação moderna com uma legibilidade
+  melhor
+
+☁️ O deploy da aplicação é feito no [Render](https://render.com) (a partir do `Dockerfile`) e o banco PostgreSQL fica no
+[Neon](https://neon.tech).
 
 ## 🚀 Como rodar
 
@@ -41,21 +54,6 @@ set -a && source .env && set +a
 Get-Content .env | Where-Object { $_ -match '^\s*[^#].*=' } | ForEach-Object { $k, $v = $_ -split '=', 2; Set-Item "env:$($k.Trim())" $v.Trim() }
 .\mvnw.cmd spring-boot:run
 ```
-
-A API sobe em `http://localhost:8080` por padrão. As migrações do Flyway rodam na inicialização.
-
-## 📚 Documentação da API
-
-Com a aplicação rodando, todos os endpoints, schemas e exemplos ficam disponíveis em:
-
-- 🟢 [**Swagger UI**](http://localhost:8080/docs): Documentação amplamente utilizada e conhecida
-- ✨ [**Scalar**](http://localhost:8080/docs/scalar): Documentação moderna para uma leitura mais limpa da referência
-
-🔐 Todas as rotas, exceto as de `/auth`, exigem autenticação. O fluxo é este:
-
-1. Crie uma conta em `POST /auth/sign-up` e faça login em `POST /auth/sign-in`.
-2. Copie o `accessToken` da resposta e informe-o como Bearer token. No Swagger, use o botão **Authorize**.
-3. Quando o access token expirar, chame `POST /auth/refresh` com o `refreshToken` para obter um novo par de tokens.
 
 ## 🧪 Testes
 
