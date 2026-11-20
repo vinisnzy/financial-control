@@ -1,5 +1,7 @@
 # Financial Control API
 
+[![CI](https://github.com/vinisnzy/financial-control-spring/actions/workflows/ci.yaml/badge.svg)](https://github.com/vinisnzy/financial-control-spring/actions/workflows/ci.yaml)
+
 API REST de controle financeiro pessoal. Gerencia receitas, despesas (avulsas, fixas e parceladas), contas bancárias e
 métodos de pagamento, e tem um dashboard com resumos mensais. A autenticação é por JWT, e cada usuário acessa apenas os
 próprios dados.
