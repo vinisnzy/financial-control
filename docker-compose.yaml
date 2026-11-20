@@ -1,4 +1,18 @@
 services:
+
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    env_file: .env
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+    depends_on:
+      db:
+        condition: service_healthy
+
+
   db:
     image: postgres:17-alpine
     container_name: financial-control-db
